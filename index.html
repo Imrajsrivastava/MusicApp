@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music App</title>
+    <link rel="stylesheet" href="MusicApp.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="main_div">
+      <div class="music_container">
+        <h2 id="title">LOTUS LANE</h2>
+        <h3 id="artist">The loylist</h3>
+        <div class="image_container">
+          <img src="spotify-background.jpg" alt="musicimage" width="100%vw" />
+        </div>
+
+        <audio src="1.mp3"></audio>
+
+        <!-- progress bar  -->
+
+        <div class="progressbar_container" id="pro_container">
+          <div class="progress_duration_meter">
+            <div id="current_time">0:00</div>
+            <div id="duration">2:44</div>
+          </div>
+          <div class="pro_div" id="pro_div">
+            <input
+              type="range"
+              name="range"
+              id="myprogresbar"
+              value="0"
+              min="0"
+              max="100"
+            />
+            <div class="progress" id="progress"></div>
+          </div>
+        </div>
+
+        <!-- controls -->
+
+        <div class="music_controls">
+          <i class="fa-solid fa-backward icon" id="prev" title="Privious"></i>
+          <i class="fa-solid fa-play icon" id="play_m" title="Play"></i>
+          <i class="fa-solid fa-forward icon" id="forw" title="Forward"></i>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const play = document.getElementById("play_m");
+      const img = document.querySelector("img");
+      const music = document.querySelector("audio");
+      const artist = document.getElementById("artist");
+      const title = document.getElementById("title");
+      const previous = document.getElementById("prev");
+      const Forward = document.getElementById("forw");
+
+      let myprogresbar = document.getElementById("myprogresbar");
+      let total_duration = document.getElementById("duration");
+      let total_current = document.getElementById("current_time");
+
+      const songs = [
+        {
+          name: "raj-1",
+          title: "lotous lane",
+          artist: "loylelist",
+          src: "1.mp3",
+          srcs: "1.jpg",
+        },
+        {
+          name: "raj-2",
+          title: "lotous raj",
+          artist: "loyleraj",
+          src: "2.mp3",
+          srcs: "2.jpg",
+        },
+        {
+          name: "raj-3",
+          title: "lotous satyam",
+          artist: "loyleshiva",
+          src: "3.mp3",
+          srcs: "3.jpg",
+        },
+      ];
+
+      // play.addEventListener('click',()=>{
+      //     music.play();
+      //     play.classList.replace("fa-play" ,"fa-pause")
+      // }) it is indivisible code ...
+
+      let isplaying = false;
+
+      const playmusic = () => {
+        isplaying = true;
+        music.play();
+        play.classList.replace("fa-play", "fa-pause");
+        img.classList.add("animation");
+      };
+
+      const pausemusic = () => {
+        isplaying = false;
+        music.pause();
+        play.classList.replace("fa-pause", "fa-play");
+        img.classList.remove("animation");
+      };
+
+      play.addEventListener("click", () => {
+        // if(isplaying){
+
+        //     pausemusic();
+
+        // }else{
+        //     playmusic();
+        // }
+
+        isplaying ? pausemusic() : playmusic(); //its turnary operater work same like if else loop
+      });
+
+      // changing the music data
+
+      const loading = (songs) => {
+        title.textContent = songs.title;
+        artist.textContent = songs.artist;
+        // music.src = "musicP/"  ;//u can add music /and image folder here but i am unble so i m passing in array of oabject
+        // img.src ="misicimg/"  ;
+        music.src = songs.src;
+        img.src = songs.srcs;
+      };
+
+      songIndex = 0;
+
+      // loading(songs[1])
+
+      const forsong = () => {
+        // songIndex++;//here u will face face problem when u will reach last index number it will not move
+        songIndex = (songIndex + 1) % songs.length; //it will start repeting index number of songs array
+        loading(songs[songIndex]);
+        playmusic();
+      };
+
+      const prevsong = () => {
+        songIndex = (songIndex - 1 + songs.length) % songs.length; //it will start repeting index number of songs array
+        loading(songs[songIndex]);
+        playmusic();
+      };
+
+      // progress js work
+
+      music.addEventListener("timeupdate", (event) => {
+        // console.log(event)
+        const { currentTime, duration } = event.srcElement;
+
+        // console.log(duration)
+        // console.log(currentTime)
+        const progress = parseInt((music.currentTime / music.duration) * 100);
+        // console.log(progress);
+        myprogresbar.value = progress;
+
+        // music duration apdat
+
+        // console.log(duration)
+
+        let min_duration = Math.floor(duration / 60);
+        let sec_duration = Math.floor(duration % 60);
+        console.log(min_duration);
+        console.log(sec_duration);
+
+        let tot_duration = `${min_duration}:${sec_duration}`;
+
+        if (duration) {
+          total_duration.textContent = `${tot_duration}`;
+        }
+
+        // current duration apdat
+        let min_currentTime = Math.floor(currentTime / 60);
+        let sec_currentTime = Math.floor(currentTime % 60);
+        console.log(min_currentTime);
+        console.log(sec_currentTime);
+
+        if (sec_currentTime < 10) {
+          sec_currentTime = `0${sec_currentTime}`;
+        }
+        let tot_currentTime = `${min_currentTime}:${sec_currentTime}`;
+
+        total_current.textContent = `${tot_currentTime}`;
+      });
+      myprogresbar.addEventListener("change", () => {
+        music.currentTime = (myprogresbar.value * music.duration) / 100;
+      });
+
+      music.addEventListener("ended", forsong); //if music end call nextsong function
+
+      Forward.addEventListener("click", forsong);
+      previous.addEventListener("click", prevsong);
+    </script>
+  </body>
+</html>
